@@ -30,6 +30,7 @@ export interface KeyEventState {
     groups: KeyGroup[];
     // ───────────── config ─────────────
     dragThreshold: number;
+    unifiedScroll: boolean;
     filter: "none" | "modifiers" | "custom";
     allowedKeys: string[];
     showEventHistory: boolean;
@@ -41,6 +42,7 @@ export interface KeyEventState {
 interface KeyEventActions {
     // ───────────── setters ─────────────
     setDragThreshold(value: KeyEventState["dragThreshold"]): void;
+    setUnifiedScroll(value: KeyEventState["unifiedScroll"]): void;
     setFilter(value: KeyEventState["filter"]): void;
     setAllowedKeys(keys: KeyEventState["allowedKeys"]): void;
     setShowEventHistory(value: KeyEventState["showEventHistory"]): void;
@@ -72,6 +74,7 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
         listening: true,
         settingsOpen: false,
         dragThreshold: 50,
+        unifiedScroll: true,
         filter: "modifiers",
         allowedKeys: [
             RawKey.ControlLeft,
@@ -85,6 +88,16 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
 
         setDragThreshold(value: number) {
             set({ dragThreshold: value });
+        },
+        setUnifiedScroll(value: boolean) {
+            // release any scroll key still held so it doesn't get stuck when switching modes
+            const state = get();
+            [RawKey.Scroll, RawKey.ScrollUp, RawKey.ScrollDown].forEach(name => {
+                if (state.pressedKeys.includes(name)) {
+                    state.onKeyRelease({ type: "KeyEvent", name, pressed: false });
+                }
+            });
+            set({ unifiedScroll: value, mouse: { ...get().mouse, wheel: 0, lastScrollAt: undefined } });
         },
         setFilter(value: "none" | "modifiers" | "custom") {
             set({ filter: value });
@@ -215,7 +228,16 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
                 return !MODIFIERS.has(pressedKeys[0]);
             }
             else if (state.filter === "custom") {
-                return !state.allowedKeys.includes(pressedKeys[0]);
+                const first = pressedKeys[0];
+                // unified "Scroll" is allowed if the user allowed it, or either directional scroll (legacy configs)
+                if (first === RawKey.Scroll) {
+                    return !(
+                        state.allowedKeys.includes(RawKey.Scroll) ||
+                        state.allowedKeys.includes(RawKey.ScrollUp) ||
+                        state.allowedKeys.includes(RawKey.ScrollDown)
+                    );
+                }
+                return !state.allowedKeys.includes(first);
             }
             return false;
         },
@@ -324,10 +346,15 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
 
             if (wheel === 0) return;
 
-            const raw_key = wheel > 0 ? RawKey.ScrollUp : RawKey.ScrollDown;
+            // unified scroll: a single "Scroll" key, whichever direction the wheel turns
+            const raw_key = state.unifiedScroll
+                ? RawKey.Scroll
+                : (wheel > 0 ? RawKey.ScrollUp : RawKey.ScrollDown);
             const previous_raw_key = state.mouse.wheel > 0 ? RawKey.ScrollUp : RawKey.ScrollDown;
 
+            // only directional keys need releasing when the direction flips
             if (
+                !state.unifiedScroll &&
                 state.mouse.wheel !== 0 &&
                 state.mouse.wheel !== wheel &&
                 state.pressedKeys.includes(previous_raw_key)
@@ -358,6 +385,9 @@ const createKeyEventStore = createSyncedStore<KeyEventStore>(
 
             // handle scroll linger
             if (state.mouse.lastScrollAt && now - state.mouse.lastScrollAt > SCROLL_LINGER_MS) {
+                if (state.pressedKeys.includes(RawKey.Scroll)) {
+                    state.onKeyRelease({ type: "KeyEvent", name: RawKey.Scroll, pressed: false });
+                }
                 if (state.pressedKeys.includes(RawKey.ScrollUp)) {
                     state.onKeyRelease({ type: "KeyEvent", name: RawKey.ScrollUp, pressed: false });
                 }

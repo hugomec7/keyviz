@@ -178,6 +178,7 @@ export const RawKey = {
   Middle: "Middle",
   Right: "Right",
   Drag: "Drag",
+  Scroll: "Scroll", // direction-agnostic scroll (used when "unified scroll" is on)
   ScrollUp: "ScrollUp",
   ScrollDown: "ScrollDown",
 } as const;

@@ -103,6 +103,7 @@ const ButtonKey: React.FC<{
 };
 
 export const CustomFilter = () => {
+  const unifiedScroll = useKeyEvent(state => state.unifiedScroll);
   const [activeTab, setActiveTab] = useState<'Keyboard' | 'Mouse' | 'Numpad'>('Keyboard');
   const [isCtrlHeld, setIsCtrlHeld] = useState(false);
   const [hoveredKey, setHoveredKey] = useState<string | undefined>(undefined);
@@ -260,8 +261,13 @@ export const CustomFilter = () => {
             <ButtonKey rawKey={RawKey.Left} className="mt-7" />
             <div className="flex flex-col gap-4 items-center">
               <ButtonKey rawKey={RawKey.Middle} />
-              <ButtonKey rawKey={RawKey.ScrollUp} />
-              <ButtonKey rawKey={RawKey.ScrollDown} />
+              {unifiedScroll
+                ? <ButtonKey rawKey={RawKey.Scroll} />
+                : <>
+                  <ButtonKey rawKey={RawKey.ScrollUp} />
+                  <ButtonKey rawKey={RawKey.ScrollDown} />
+                </>
+              }
               <ButtonKey rawKey={RawKey.Drag} />
             </div>
             <ButtonKey rawKey={RawKey.Right} className="mt-7" />

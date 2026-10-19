@@ -35,6 +35,13 @@ const mouseIcons: Record<string, JSX.Element> = {
             <path d="M13.5 12.5C13.5 11.5681 13.5 11.1022 13.6522 10.7346C13.8552 10.2446 14.2446 9.85522 14.7346 9.65224C15.1022 9.5 15.5682 9.5 16.5 9.5C17.4318 9.5 17.8978 9.5 18.2654 9.65224C18.7554 9.85522 19.1448 10.2446 19.3478 10.7346C19.5 11.1022 19.5 11.5681 19.5 12.5V16.5C19.5 17.4319 19.5 17.8978 19.3478 18.2654C19.1448 18.7554 18.7554 19.1448 18.2654 19.3478C17.8978 19.5 17.4318 19.5 16.5 19.5C15.5682 19.5 15.1022 19.5 14.7346 19.3478C14.2446 19.1448 13.8552 18.7554 13.6522 18.2654C13.5 17.8978 13.5 17.4319 13.5 16.5V12.5Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
     ),
+    Scroll: (
+        <svg className="w-full h-full" width="33" height="43" viewBox="0 0 33 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.5 41.5C28.5 41.5 31.5 32.48 31.5 21.5C31.5 10.52 28.5 1.5 16.5 1.5C4.49986 1.5 1.5 10.5199 1.5 21.5C1.5 32.48 4.49986 41.5 16.5 41.5Z" stroke="white" stroke-width="3" />
+            <path d="M12.4922 15.2172C14.4602 13.1772 15.6602 11.3772 16.5722 11.5066C17.3402 11.5002 18.0602 12.6972 20.5082 15.2172" stroke="#00FF6A" stroke-width="3" stroke-linecap="round" />
+            <path d="M20.5082 25.7812C18.5402 27.8212 17.3402 29.6212 16.4282 29.4918C15.6602 29.4982 14.9402 28.3012 12.4922 25.7812" stroke="#00FF6A" stroke-width="3" stroke-linecap="round" />
+        </svg>
+    ),
     ScrollDown: (
         <svg className="w-full h-full" width="33" height="43" viewBox="0 0 33 43" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M16.5 41.5C28.5 41.5 31.5 32.48 31.5 21.5C31.5 10.52 28.5 1.5 16.5 1.5C4.49986 1.5 1.5 10.5199 1.5 21.5C1.5 32.48 4.49986 41.5 16.5 41.5Z" stroke="white" stroke-width="3" />
@@ -53,16 +60,16 @@ const mouseIcons: Record<string, JSX.Element> = {
 export const MouseIndicator = () => {
     const pressedButton = useKeyEvent(state => state.pressedMouseButton);
     const wheel = useKeyEvent(state => state.mouse.wheel);
+    const unifiedScroll = useKeyEvent(state => state.unifiedScroll);
     const style = useKeyStyle(state => state.mouse);
 
     let icon = "Default";
 
     if (pressedButton && mouseIcons[pressedButton]) {
         icon = pressedButton;
-    } else if (wheel > 0) {
-        icon = "ScrollUp";
-    } else if (wheel < 0) {
-        icon = "ScrollDown";
+    } else if (wheel !== 0) {
+        // unified: same icon whichever way the wheel turns
+        icon = unifiedScroll ? "Scroll" : (wheel > 0 ? "ScrollUp" : "ScrollDown");
     }
 
     return (

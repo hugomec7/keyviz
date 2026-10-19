@@ -9,6 +9,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { NumberScrubber } from "../ui/number-input-scrub";
 import { useState } from "react";
 import { Toggle } from "../ui/toggle";
+import { MouseScrollIcon } from "../ui/icons";
 
 
 export const MouseSettings = () => {
@@ -17,6 +18,8 @@ export const MouseSettings = () => {
 
     const dragThreshold = useKeyEvent(state => state.dragThreshold);
     const setDragThreshold = useKeyEvent(state => state.setDragThreshold);
+    const unifiedScroll = useKeyEvent(state => state.unifiedScroll);
+    const setUnifiedScroll = useKeyEvent(state => state.setUnifiedScroll);
 
     const [offsetLinked, setOffsetLinked] = useState(true);
 
@@ -200,6 +203,23 @@ export const MouseSettings = () => {
                     className="w-32 h-8"
                     value={dragThreshold}
                     onChange={setDragThreshold}
+                />
+            </ItemActions>
+        </Item>
+
+        <Item variant="muted">
+            <ItemContent>
+                <ItemTitle>
+                    <MouseScrollIcon size="1em" /> Unified Scroll
+                </ItemTitle>
+                <ItemDescription>
+                    Show just "Scroll" instead of "Scroll Up" / "Scroll Down", whichever way the wheel turns
+                </ItemDescription>
+            </ItemContent>
+            <ItemActions>
+                <Switch
+                    checked={unifiedScroll}
+                    onCheckedChange={setUnifiedScroll}
                 />
             </ItemActions>
         </Item>

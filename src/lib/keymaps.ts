@@ -1,5 +1,5 @@
 import { platform } from "@tauri-apps/plugin-os";
-import { MouseLeftClickIcon, MouseMiddleClickIcon, MouseRightClickIcon, MouseRightDragIcon, MouseScrollDownIcon, MouseScrollUpIcon, ReturnIcon } from "@/components/ui/icons";
+import { MouseLeftClickIcon, MouseMiddleClickIcon, MouseRightClickIcon, MouseRightDragIcon, MouseScrollDownIcon, MouseScrollIcon, MouseScrollUpIcon, ReturnIcon } from "@/components/ui/icons";
 import { ArrowBigUpDashIcon, ArrowBigUpIcon, ArrowDownIcon, ArrowDownToLineIcon, ArrowLeftIcon, ArrowLeftRightIcon, ArrowRightIcon, ArrowRightToLineIcon, ArrowUpIcon, ArrowUpToLineIcon, ChevronUpIcon, CircleArrowOutUpLeftIcon, CommandIcon, DeleteIcon, Grid2X2Icon, ImageIcon, LockIcon, LucideIcon, MouseIcon, MoveDownRightIcon, MoveUpLeftIcon, OptionIcon, PauseIcon, SpaceIcon, SparkleIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
 
 // ───────────── Platform Logic ─────────────
@@ -424,6 +424,12 @@ export const keymaps: Record<string, DisplayData> = {
     Drag: {
         label: "drag",
         icon: MouseRightDragIcon,
+        category: "mouse",
+    },
+    Scroll: {
+        label: "scroll",
+        shortLabel: "scroll",
+        icon: MouseScrollIcon,
         category: "mouse",
     },
     ScrollUp: {

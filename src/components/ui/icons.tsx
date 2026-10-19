@@ -66,6 +66,14 @@ export const MouseRightDragIcon = createCustomIcon("MouseRightDragIcon", (
     </>
 ));
 
+export const MouseScrollIcon = createCustomIcon("MouseScrollIcon", (
+    <>
+        <path d="M19 9C19 5.13401 15.866 2 12 2C8.13401 2 5 5.13401 5 9V15C5 18.866 8.13401 22 12 22C15.866 22 19 18.866 19 15V9Z" />
+        <path d="M10 8L12 6L14 8" />
+        <path d="M10 12L12 14L14 12" />
+    </>
+));
+
 export const MouseScrollUpIcon = createCustomIcon("MouseScrollIcon", (
     <>
         <path d="M19 9C19 5.13401 15.866 2 12 2C8.13401 2 5 5.13401 5 9V15C5 18.866 8.13401 22 12 22C15.866 22 19 18.866 19 15V9Z" />
